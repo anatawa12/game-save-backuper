@@ -1,0 +1,33 @@
+[package]
+name = "game-save-backuper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rcon = { version = "0", features = ["rt-tokio"] }
+tar = "0.4"
+#lzma-sys = { version = "0.1.17", features = ["static"] }
+chrono = { version = "0.4", features = ["clock", "std"], default-features = false }
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+anyhow = "1"
+tempfile = "3"
+futures = "0.3"
+log = "0.4"
+
+[dependencies.env_logger]
+version = "0.9"
+default-features = false
+features = [
+    "termcolor",
+    "atty",
+    "humantime",
+]
+
+[dependencies.tokio]
+version = "1"
+features = [
+    "rt-multi-thread",
+    "fs",
+    "macros",
+]

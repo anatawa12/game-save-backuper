@@ -1,0 +1,18 @@
+# example (test) config file.
+# this is for test run with cargo run
+
+preset: 
+backup_dir: backups
+save_dir: save
+backups:
+  - name: 5min
+    interval: 5 minutely
+    max_backups: 12
+
+  - name: 30min
+    interval: 30 minutely
+    max_backups: 12
+
+  - name: 1h
+    interval: hourly
+    max_backups: 12
