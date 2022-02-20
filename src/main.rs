@@ -9,7 +9,7 @@ use anyhow::Result;
 use anyhow::{Context as _, Error};
 use chrono::{Duration, NaiveDateTime, NaiveTime, Timelike, Utc};
 use futures::future::{join_all, try_join_all};
-use log::{error, trace};
+use log::{error, info, trace};
 use std::fs::File as StdFile;
 use std::io::{BufWriter, ErrorKind, SeekFrom, Write};
 use std::path::Path;
@@ -25,7 +25,7 @@ compile_error!("diff-save feature is not yet implemented");
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    env_logger::init();
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let config = load_config()
         .await
@@ -41,6 +41,8 @@ async fn main() -> Result<()> {
 
 async fn main_loop(ctx: &mut Context<'_>) -> ! {
     let mut begin = chrono::Utc::now().naive_utc();
+
+    info!("backup start!!!");
 
     loop {
         tokio::time::sleep(compute_sleep_time(begin.time())).await;
@@ -116,7 +118,7 @@ async fn do_step(ctx: &mut Context<'_>, begin: &NaiveDateTime, end: &NaiveDateTi
         .collect::<Vec<_>>();
 
     if !passed.is_empty() {
-        trace!(
+        info!(
             "those settings will be used to backup {:?}",
             passed.iter().map(|x| &x.name).collect::<Vec<_>>()
         );
