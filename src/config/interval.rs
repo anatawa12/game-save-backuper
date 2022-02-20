@@ -216,7 +216,6 @@ impl SaveInterval {
 #[cfg(test)]
 mod get_last_date_until_test {
     use super::*;
-    use chrono::Utc;
     use SaveInterval::*;
 
     #[test]

@@ -1,5 +1,7 @@
 mod config;
+mod tar;
 
+use self::tar::append_dir_all_sorted;
 use crate::config::{load_config, BackupMode, BackupSetting, Config, GamePreset};
 use anyhow::Result;
 use anyhow::{Context as _, Error};
@@ -135,9 +137,10 @@ async fn backup_to_tmp(ctx: &mut Context<'_>) -> Result<StdFile> {
     let save_dir = ctx.config.save_dir.clone();
     let tar_file = asyncify(|| {
         let mut file = tempfile::tempfile()?;
-        let mut tar = tar::Builder::new(BufWriter::new(&mut file));
+        let mut tar = ::tar::Builder::new(BufWriter::new(&mut file));
         // add config file
-        tar.append_dir_all("", save_dir)?;
+        let save_dir = save_dir;
+        append_dir_all_sorted(&mut tar, "".as_ref(), save_dir.as_path())?;
         tar.finish()?;
         drop(tar);
         file.flush()?;
