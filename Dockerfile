@@ -17,4 +17,4 @@ ADD --chmod=555 "https://api.anatawa12.com/short/tini-download?arch=${TARGETARCH
 
 USER nonroot
 
-ENTRYPOINT ["/tini", "--", "/zip-http-server"]
+ENTRYPOINT ["/tini", "--", "/game-save-backuper"]
