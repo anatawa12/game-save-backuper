@@ -1,7 +1,22 @@
 [package]
 name = "game-save-backuper"
-version = "0.1.0"
+version = "0.1.0-SNAPSHOT"
 edition = "2021"
+
+authors = [
+    "anatawa12",
+]
+description = "The tool to back up save data of some game server."
+readme = "README.md"
+license = "Apache-2.0 OR MIT"
+keywords = ["game", "backup"]
+categories = ["accessibility"]
+include = [
+    "README.md",
+    "src/**",
+    "LICENSE-*",
+    "Cargo*",
+]
 
 [dependencies]
 rcon = { version = "0", features = ["rt-tokio"] }
