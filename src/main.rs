@@ -2,9 +2,9 @@ mod config;
 mod tar;
 
 use self::tar::append_dir_all_sorted;
-use crate::config::{load_config, BackupSetting, Config, GamePreset};
 #[cfg(feature = "diff-save")]
 use crate::config::BackupMode;
+use crate::config::{load_config, BackupSetting, Config, GamePreset};
 use anyhow::Result;
 use anyhow::{Context as _, Error};
 use chrono::{Duration, NaiveDateTime, NaiveTime, Timelike, Utc};
@@ -379,7 +379,7 @@ impl<'a> Context<'a> {
         self.connection = Some(
             builder
                 .connect(
-                    self.config.rcon_address.unwrap(),
+                    self.config.rcon_address.as_slice(),
                     &self.config.rcon_password,
                 )
                 .await?,

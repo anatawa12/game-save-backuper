@@ -3,8 +3,8 @@ mod interval;
 use anyhow::{bail, Error, Result};
 use log::trace;
 use serde::Deserialize;
-use std::net::SocketAddr;
 use std::io;
+use std::net::{SocketAddr, ToSocketAddrs};
 use std::path::PathBuf;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
@@ -28,10 +28,10 @@ pub(crate) async fn load_config() -> Result<Box<Config>> {
             trace!("config.yml not found. trying GAME_CONFIG_YAML");
             match std::env::var("GAME_CONFIG_YAML") {
                 Ok(v) => v.into_bytes(),
-                Err(std::env::VarError::NotPresent) =>
-                    bail!("no config.yml and GAME_CONFIG_YAML found"),
-                Err(std::env::VarError::NotUnicode(_)) =>
-                    bail!("invalid GAME_CONFIG_YAML found"),
+                Err(std::env::VarError::NotPresent) => {
+                    bail!("no config.yml and GAME_CONFIG_YAML found")
+                }
+                Err(std::env::VarError::NotUnicode(_)) => bail!("invalid GAME_CONFIG_YAML found"),
             }
         }
         Err(e) => bail!(e),
@@ -41,15 +41,15 @@ pub(crate) async fn load_config() -> Result<Box<Config>> {
 
     trace!("verifying config.yml");
     let preset = config_file.preset;
-    let rcon_address = match config_file.rcon_address {
-        Some(addr) => Some(addr.parse()?),
+    let rcon_address: Vec<SocketAddr> = match config_file.rcon_address {
+        Some(addr) => addr.to_socket_addrs()?.collect(),
         None => match config_file.preset {
             None if config_file.commands_before.is_none()
                 && config_file.commands_after.is_none() =>
             {
-                None
+                vec![]
             }
-            Some(GamePreset::Minecraft) => Some("localhost:25575".parse().unwrap()),
+            Some(GamePreset::Minecraft) => "localhost:25575".to_socket_addrs().unwrap().collect(),
             None => {
                 return Err(Error::msg(
                     "rcon_address is required if no preset are defined",
@@ -115,7 +115,7 @@ pub(crate) struct Config {
     /// the preset. this may be used to help rcon connection
     pub(crate) preset: Option<GamePreset>,
     /// the address to rcon server
-    pub(crate) rcon_address: Option<SocketAddr>,
+    pub(crate) rcon_address: Vec<SocketAddr>,
     /// the password of rcon
     pub(crate) rcon_password: String,
     /// the command will be ran before backup
