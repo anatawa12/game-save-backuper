@@ -193,7 +193,7 @@ dependencies = [
 
 [[package]]
 name = "game-save-backuper"
-version = "0.1.1-SNAPSHOT"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "chrono",
