@@ -1,22 +1,41 @@
 mod interval;
 
-use anyhow::{Error, Result};
+use anyhow::{bail, Error, Result};
 use log::trace;
 use serde::Deserialize;
 use std::net::SocketAddr;
+use std::io;
 use std::path::PathBuf;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 
 pub(crate) use self::interval::SaveInterval;
 
-pub(crate) async fn load_config() -> Result<Box<Config>> {
-    trace!("loading config.yml to memory");
+async fn read_config_file() -> io::Result<Vec<u8>> {
     let mut config_file = File::open("config.yml").await?;
     let config_file_len = config_file.metadata().await?.len();
     let mut config_file_bytes = Vec::with_capacity(config_file_len as usize);
     config_file.read_to_end(&mut config_file_bytes).await?;
     drop(config_file);
+    Ok(config_file_bytes)
+}
+
+pub(crate) async fn load_config() -> Result<Box<Config>> {
+    trace!("loading config.yml to memory");
+    let config_file_bytes = match read_config_file().await {
+        Ok(v) => v,
+        Err(ref e) if e.kind() == io::ErrorKind::NotFound => {
+            trace!("config.yml not found. trying GAME_CONFIG_YAML");
+            match std::env::var("GAME_CONFIG_YAML") {
+                Ok(v) => v.into_bytes(),
+                Err(std::env::VarError::NotPresent) =>
+                    bail!("no config.yml and GAME_CONFIG_YAML found"),
+                Err(std::env::VarError::NotUnicode(_)) =>
+                    bail!("invalid GAME_CONFIG_YAML found"),
+            }
+        }
+        Err(e) => bail!(e),
+    };
     trace!("parsing config.yml");
     let config_file: ConfigFile = serde_yaml::from_slice(&config_file_bytes)?;
 
