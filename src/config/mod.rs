@@ -120,6 +120,7 @@ pub(crate) struct BackupSetting {
     /// the interval of backup.
     /// It's not allowed to be less than 5 minutes.
     pub(crate) interval: SaveInterval,
+    #[cfg_attr(not(feature = "diff-save"), allow(dead_code))]
     /// the mode of backup
     pub(crate) backup_mode: BackupMode,
 }
@@ -150,8 +151,13 @@ struct BackupSettingFile {
     backup_mode: BackupMode,
 }
 
+#[cfg(feature = "diff-save")]
 fn backup_mode_default() -> BackupMode {
     BackupMode::ModifiesOnly
+}
+#[cfg(not(feature = "diff-save"))]
+fn backup_mode_default() -> BackupMode {
+    BackupMode::Simple
 }
 
 #[derive(Deserialize, Debug, Copy, Clone)]
@@ -178,8 +184,10 @@ impl GamePreset {
 #[serde(rename_all = "kebab-case")]
 pub(crate) enum BackupMode {
     Simple,
+    #[cfg(feature = "diff-save")]
     /// this will replace previously newest backup with a backup only with modified files.
     ModifiesOnly,
+    #[cfg(feature = "diff-save")]
     /// this will replace previously newest backup with a backup with bsdiff binary patch file.
     FileDiff,
 }

@@ -2,7 +2,9 @@ mod config;
 mod tar;
 
 use self::tar::append_dir_all_sorted;
-use crate::config::{load_config, BackupMode, BackupSetting, Config, GamePreset};
+use crate::config::{load_config, BackupSetting, Config, GamePreset};
+#[cfg(feature = "diff-save")]
+use crate::config::BackupMode;
 use anyhow::Result;
 use anyhow::{Context as _, Error};
 use chrono::{Duration, NaiveDateTime, NaiveTime, Timelike, Utc};
@@ -17,6 +19,9 @@ use tokio::io::{AsyncReadExt, AsyncSeekExt, AsyncWriteExt};
 use tokio::task::spawn_blocking;
 
 type Connection = rcon::Connection<tokio::net::TcpStream>;
+
+#[cfg(feature = "diff-save")]
+compile_error!("diff-save feature is not yet implemented");
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -344,6 +349,7 @@ async fn do_save_backup(
     }
 
     // forth, replace previously newest backup with patch backup if needed
+    #[cfg(feature = "diff-save")]
     if config.backup_mode != BackupMode::Simple && files_lines.len() >= 2 {
         // TODO: impl
     }

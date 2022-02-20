@@ -31,3 +31,6 @@ features = [
     "fs",
     "macros",
 ]
+
+[features]
+diff-save = []
