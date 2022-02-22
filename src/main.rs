@@ -165,7 +165,7 @@ async fn backup_to_tmp(ctx: &mut Context<'_>) -> Result<StdFile> {
 async fn save_backup(backup_tar: StdFile, now: &NaiveDateTime, config: &BackupSetting) {
     if let Some(err) = do_save_backup(backup_tar, now, config).await.err() {
         error!(
-            "error during backing up for {} at {}: {}",
+            "error during backing up for {} at {}: {:?}",
             config.name, now, err
         )
     }
