@@ -1,6 +1,6 @@
 [package]
 name = "game-save-backuper"
-version = "0.1.4"
+version = "0.1.5-SNAPSHOT"
 edition = "2021"
 
 authors = [
