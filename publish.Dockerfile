@@ -6,6 +6,4 @@ ARG TARGETVARIANT
 COPY --chmod=555 "./outputs/built-${TARGETARCH}/game-save-backuper" /game-save-backuper
 ADD --chmod=555 "https://api.anatawa12.com/short/tini-download?arch=${TARGETARCH}&variant=${TARGETVARIANT}" /tini
 
-USER nonroot
-
 ENTRYPOINT ["/tini", "--", "/game-save-backuper"]
