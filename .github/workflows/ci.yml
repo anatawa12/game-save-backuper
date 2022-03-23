@@ -1,12 +1,7 @@
 name: Ci
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+  push: {}
   workflow_dispatch: {}
 
 jobs:
