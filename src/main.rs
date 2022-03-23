@@ -138,7 +138,9 @@ async fn do_step(ctx: &mut Context<'_>, begin: &NaiveDateTime, end: &NaiveDateTi
 
 async fn backup_to_tmp(ctx: &mut Context<'_>) -> Result<StdFile> {
     for cmd in &ctx.config.commands_before {
-        ctx.send_command(cmd).await?;
+        ctx.send_command(cmd)
+            .await
+            .context("sending before command")?;
     }
 
     let save_dir = ctx.config.save_dir.clone();
@@ -157,7 +159,9 @@ async fn backup_to_tmp(ctx: &mut Context<'_>) -> Result<StdFile> {
     .context("saving to temporal tar file.")?;
 
     for cmd in &ctx.config.commands_after {
-        ctx.send_command(cmd).await?;
+        ctx.send_command(cmd)
+            .await
+            .context("sending after command")?;
     }
     Ok(tar_file)
 }
