@@ -398,10 +398,13 @@ impl<'a> Context<'a> {
             Some(s) => s,
             None => self.reconnect_rcon().await?,
         };
+        use std::io::ErrorKind::*;
         loop {
             match connection.cmd(command).await {
                 Ok(s) => return Ok(s),
-                Err(rcon::Error::Io(e)) if e.kind() == std::io::ErrorKind::ConnectionReset => {
+                Err(rcon::Error::Io(e))
+                    if matches!(e.kind(), ConnectionReset | BrokenPipe | NotConnected) =>
+                {
                     // continue with reconnection
                     connection = self.reconnect_rcon().await?;
                 }
