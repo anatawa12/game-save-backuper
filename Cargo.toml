@@ -24,7 +24,7 @@ tar = "0.4"
 #lzma-sys = { version = "0.1.17", features = ["static"] }
 chrono = { version = "0.4", features = ["clock", "std"], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.8"
+serde_yaml = "0.9"
 anyhow = "1"
 tempfile = "3"
 futures = "0.3"
